@@ -1,13 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
-type FirestoreMap = { [key: string]: FirestorePrimitive };
-type FirestoreGeopoint = { latitude: number; longitude: number };
-type FirestoreReference = { path: string };
-type FirestorePrimitive = string | number | boolean | null | Date | FirestoreGeopoint | FirestoreMap
-type FirestoreArray = Array<FirestorePrimitive>
-type FirestoreValue = FirestorePrimitive | FirestoreArray | FirestoreReference
-type FiregraphResult = { [key: string]: FirestoreValue };
+type FiregraphResult = { [key: string]: any };
 type FiregraphCollectionResult = {
     name: string;
     docs: FiregraphResult[];
@@ -25,12 +19,19 @@ type GraphQLSelectionSet = {
     selections?: GraphQLSelection[];
 }
 
+/**
+ * Retrieves documents from a specified collection path. Currently retrieves
+ * all fields indicated in the GraphQL selection set. Eventually this will
+ * allow users to conduct queries with GraphQL syntax.
+ * @param store An initialized Firestore instance.
+ * @param collectionName The path of the collection we want to retrieve.
+ * @param selectionSet The rules for defining the documents we want to get.
+ */
 async function selectFromCollection(
     store: firebase.firestore.Firestore,
     collectionName: string,
     selectionSet: GraphQLSelectionSet
 ): Promise<FiregraphCollectionResult> {
-    console.log(`Fetching data from ${collectionName}`);
     let collectionResult: FiregraphCollectionResult = {
         name: collectionName,
         docs: []
@@ -46,11 +47,12 @@ async function selectFromCollection(
                 const { selectionSet } = field;
                 if (selectionSet && selectionSet.selections) {
                     let nestedPath = `${collectionName}/${doc.id}/${fieldName}`;
-                    docResult[fieldName] = await selectFromCollection(
+                    const nestedResult = await selectFromCollection(
                         store,
                         nestedPath,
                         selectionSet
                     );
+                    docResult[fieldName] = nestedResult.docs;
                 } else {
                     if (fieldName === 'id') {
                         docResult[fieldName] = doc.id;
@@ -65,29 +67,49 @@ async function selectFromCollection(
     return collectionResult;
 }
 
+/**
+ * Runs a GraphQL query against a Google Cloud Firestore instance.
+ * @param firestore An initialized Firestore instance.
+ * @param query GraphQL query to be run against the Firestore. Use `graphql-tag`
+ *        to parse your query, otherwise this will not work.
+ */
 async function resolve(
     firestore: firebase.firestore.Firestore,
     query: any
-): Promise<FiregraphCollectionResult[]> {
-    const results: any[] = [];
+): Promise<FiregraphResult> {
+    const results: FiregraphResult = {};
     const { definitions } = query;
+
     for (let definition of definitions) {
         const { selectionSet } = definition;
+
+        // Because we know that the root-level values in a query are collection
+        // names, we can define them as collections to be targeted.
         const targetCollections = selectionSet.selections;
+
+        // For each collection we have defined in our query, we want to fetch
+        // its name and run the query for the requested values.
         for (let collection of targetCollections) {
             const {
                 name: { value: collectionName },
                 selectionSet
             } = collection;
+
+            // Now we begin to recursively fetch values defined in GraphQL
+            // selection sets. We pass our `firestore` instance to ensure
+            // all selections are done from the same database.
             const result = await selectFromCollection(
                 firestore,
                 collectionName,
                 selectionSet
             );
-            results.push(result);
+
+            // Push the root query result to our results list.
+            results[result.name] = result.docs;
         }
     }
 
+    // All necessary queries have been executed.
     return results;
 }
 

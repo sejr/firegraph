@@ -6,8 +6,10 @@
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "example": "ts-node example/types.ts",
     "build": "tsc -p tsconfig.json --outDir lib",
-    "test": "jest"
+    "prepublish": "npm-auto-version",
+    "postpublish": "git push origin --tags"
   },
   "dependencies": {
     "firebase": "^5.8.1",
@@ -18,7 +20,9 @@
     "@types/dotenv": "^6.1.0",
     "@types/jest": "^23.3.13",
     "dotenv": "^6.2.0",
+    "firebase-mock": "^2.2.10",
     "jest": "^24.0.0",
+    "npm-auto-version": "^1.0.0",
     "ts-jest": "^23.10.5",
     "ts-node": "^8.0.2",
     "typescript": "^3.3.1"
