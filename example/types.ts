@@ -9,7 +9,7 @@ const userQuery = gql`
             hometown
             fullName
             birthdate
-            favoriteColor
+            favoriteColor,
             posts {
                 id
                 message
@@ -19,7 +19,5 @@ const userQuery = gql`
 `;
 
 firegraph.resolve(firestore, userQuery).then(collections => {
-    for (let user of collections.users) {
-        console.log(JSON.stringify(user, null, 4));
-    }
+    console.log(JSON.stringify(collections, null, 4));
 });

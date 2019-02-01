@@ -27,7 +27,5 @@ const postsQuery = gql`
 `;
 
 firegraph.resolve(firestore, postsQuery).then(collections => {
-    for (let post of collections.posts) {
-        console.log(JSON.stringify(post, null, 4));
-    }
+    console.log(JSON.stringify(collections, null, 4));
 });
