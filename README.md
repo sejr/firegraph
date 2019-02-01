@@ -58,3 +58,21 @@ firegraph.resolve(firestore, userQuery).then(result => {
     }
 });
 ```
+
+The console log in that for loop at the end would produce something like:
+
+``` typescript
+{
+    id: 'sZOgUC33ijsGSzX17ybT',
+    hometown: GeoPoint { _lat: 40.141832766, _long: -84.242165698 },
+    fullName: { family: 'Doe', given: 'John', middle: null },
+    birthdate: Timestamp { seconds: 747763200, nanoseconds: 0 },
+    favoriteColor: 'blue',
+    posts: [
+        {
+            id: 'i4CWhNXr8qPqaG3KLrZk',
+            message: 'Hello world!'
+        }
+    ]
+}
+```
