@@ -1,7 +1,7 @@
 <p align="center">
     <img src="./assets/brand.svg" width="200px"/>
 </p>
-<h3 align="center">GraphQL Superpowers for Google Cloud Firebase</h3>
+<h3 align="center">GraphQL Superpowers for Google Cloud Firestore</h3>
 
 > This is **not** an official Google product, nor is it maintained or supported by Google employees. For support with Firebase or Firestore, please [click here](https://firebase.google.com/support/).
 
