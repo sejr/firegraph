@@ -5,7 +5,10 @@
 
 <p align="center">
     <a href="https://badge.fury.io/js/firegraph">
-        <img src="https://badge.fury.io/js/firegraph.svg" alt="npm version" height="18">
+        <img src="https://badge.fury.io/js/firegraph.svg" alt="npm version" height="18" />
+    </a>
+    <a href="https://travis-ci.org/sejr/firegraph">
+        <img src="https://travis-ci.org/sejr/firegraph.svg?branch=master" alt="travis build" />
     </a>
 </p>
 
