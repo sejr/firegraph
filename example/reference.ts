@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import firegraph from '../src';
-import { firestore } from '../firebase';
+import { firestore } from '../test/firebase';
 
 /**
  * 

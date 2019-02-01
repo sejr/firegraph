@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import firegraph from 'firegraph';
-import { firestore } from '../firebase';
+import { firestore } from '../test/firebase';
 
 const userQuery = gql`
     query {

@@ -2,14 +2,14 @@
   "name": "firegraph",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc -p tsconfig.json --outDir lib",
     "example:types": "ts-node example/types.ts",
     "example:reference": "ts-node example/reference.ts",
-    "prepublish": "npm-auto-version",
+    "prepublish": "yarn build && npm-auto-version",
     "postpublish": "git push origin --tags"
   },
   "dependencies": {
