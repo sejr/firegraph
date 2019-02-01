@@ -35,9 +35,15 @@ yarn add graphql graphql-tag firegraph
 
 ## Usage
 
-**You do not need to host a GraphQL server to use Firegraph.** Your project does require the above dependencies (`firegraph`, `graphql`, and `graphql-tag`, however. You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
+**You do not need to host a GraphQL server to use Firegraph.** Your project does require the above dependencies (`firegraph`, `graphql`, and `graphql-tag`), however. You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
 
 ### Retrieving a Collection
+
+Every top-level name in a `query` is considered a Firestore collection. For
+example, in the query below, we are querying every document in the `posts`
+collection and retrieving the `id`, `title`, and `body` values from each
+document in the response. Note: `id` is a special field that actually retrieves
+the document key.
 
 ``` typescript
 const { posts } = await firegraph.resolve(firestore, gql`
@@ -50,7 +56,13 @@ const { posts } = await firegraph.resolve(firestore, gql`
     }
 `)
 ```
+
 ### Retrieving Nested Collections
+
+When you have nested values (e.g. in the query below), they are processed
+as child collections. To clarify, for each `doc` in the `posts` collection,
+we also retrieve the `posts/${doc.id}/comments` collection. This result is
+stored in the `comments` key for each document that is returned.
 
 ``` typescript
 const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
@@ -100,6 +112,7 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
 
 - [x] Querying values from collections
 - [x] Querying nested collections
+- [ ] GraphQL mutations allowing updates to multiple documents at once
 - [ ] Basic search functionality (on par with current Firestore API)
 - [ ] More advanced search functionality (GraphQL params, fragments, etc)
 
