@@ -13,7 +13,21 @@ ___
 
 Firestore makes it easy to securely store and retrieve data, and already has a powerful API for querying data. **Firegraph** builds on that awesome foundation by making it even easier to retrieve data across collections, subcollections, and document references.
 
-## Example
+## Getting Started
+
+Getting started with Firegraph is very easy! No need to write or host your own GraphQL server, either.
+
+### Installing
+
+``` bash
+# npm
+npm install --save graphql graphql-tag firegraph
+
+# Yarn
+yarn add graphql graphql-tag firegraph
+```
+
+### Usage
 
 Right now, `firegraph` has somewhat limited functionality but it can still be very useful when you want a quick way to retrieve values for various collections with arbitrary levels of nesting.
 
