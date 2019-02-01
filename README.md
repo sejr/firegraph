@@ -39,12 +39,12 @@ import { firestore } from '../path/to/my/firebase';
 const userQuery = gql`
     query {
         users {
-            id                  // document id
-            hometown            // geopoint
-            fullName            // map
-            birthdate           // timestamp
-            favoriteColor       // string
-            posts {             // nested collection
+            id
+            hometown
+            fullName
+            birthdate
+            favoriteColor
+            posts {
                 id
                 message
             }
