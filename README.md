@@ -3,6 +3,12 @@
 </p>
 <h3 align="center">GraphQL Superpowers for Google Cloud Firestore</h3>
 
+<p align="center">
+    <a href="https://badge.fury.io/js/firegraph">
+        <img src="https://badge.fury.io/js/firegraph.svg" alt="npm version" height="18">
+    </a>
+</p>
+
 > This is **not** an official Google product, nor is it maintained or supported by Google employees. For support with Firebase or Firestore, please [click here](https://firebase.google.com/support/).
 
 ___
