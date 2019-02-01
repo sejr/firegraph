@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./assets/logo.png" width="200px"/>
+    <img src="https://raw.githubusercontent.com/sejr/firegraph/master/assets/logo.png" width="200px"/>
 </p>
 <h3 align="center">GraphQL Superpowers for Google Cloud Firestore</h3>
 
