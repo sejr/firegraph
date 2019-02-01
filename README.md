@@ -70,6 +70,8 @@ const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
 
 ### Retrieving Collections with References
 
+Right now, we are assuming that `post.author` is a string that matches the ID of some document in the `users` collection. In the future we will leverage Firestore's `DocumentReference` value type to handle both use cases.
+
 ``` typescript
 const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore, gql`
     query {
