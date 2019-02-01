@@ -92,8 +92,5 @@ async function resolve(
 }
 
 export default {
-    resolve,
-    test: async (): Promise<boolean> => {
-        return true;
-    }
+    resolve
 };
