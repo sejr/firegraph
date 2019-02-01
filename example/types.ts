@@ -20,6 +20,6 @@ const userQuery = gql`
 
 firegraph.resolve(firestore, userQuery).then(collections => {
     for (let user of collections.users) {
-        console.log(user);
+        console.log(JSON.stringify(user, null, 4));
     }
 });
