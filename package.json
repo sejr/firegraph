@@ -2,17 +2,19 @@
   "name": "firegraph",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "license": "MIT",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "example": "ts-node example/types.ts",
     "build": "tsc -p tsconfig.json --outDir lib",
+    "example:types": "ts-node example/types.ts",
+    "example:reference": "ts-node example/reference.ts",
     "prepublish": "npm-auto-version",
     "postpublish": "git push origin --tags"
   },
   "dependencies": {
     "firebase": "^5.8.1",
+    "firegraph": "^1.0.1",
     "graphql": "^14.1.1",
     "graphql-tag": "^2.10.1"
   },

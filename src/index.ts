@@ -19,6 +19,59 @@ type GraphQLSelectionSet = {
     selections?: GraphQLSelection[];
 }
 
+async function selectDocument(
+    store: firebase.firestore.Firestore,
+    documentPath: string,
+    selectionSet: GraphQLSelectionSet
+): Promise<FiregraphResult> {
+    let docResult: FiregraphResult = {};
+    const doc = await store.doc(documentPath).get();
+    const data = doc.data()!;
+    if (selectionSet && selectionSet.selections) {
+        const fieldsToRetrieve = selectionSet.selections;
+        for (let field of fieldsToRetrieve) {
+            let args: any = {};
+            for (let arg of field.arguments!) {
+                args[(arg as any).name.value] = (arg as any).value.value
+            }
+            const fieldName = (field as any).name.value;
+            const { selectionSet } = field;
+
+            // Here we handle document references and nested collections.
+            // First, we need to determine which one we are dealing with.
+            if (selectionSet && selectionSet.selections) {
+                let nestedPath: string;
+                if (args.fromCollection) {
+                    const target = args.fromCollection;
+                    const docId = data[fieldName];
+                    nestedPath = `${target}/${docId}`;
+                    const nestedResult = await selectDocument(
+                        store,
+                        nestedPath,
+                        selectionSet
+                    );
+                    docResult[fieldName] = nestedResult;
+                } else {
+                    nestedPath = `${documentPath}/${fieldName}`;
+                    const nestedResult = await selectFromCollection(
+                        store,
+                        nestedPath,
+                        selectionSet
+                    );
+                    docResult[fieldName] = nestedResult.docs;
+                }
+            } else {
+                if (fieldName === 'id') {
+                    docResult[fieldName] = doc.id;
+                } else {
+                    docResult[fieldName] = data[fieldName];
+                }
+            }
+        }
+    }
+    return docResult;
+}
+
 /**
  * Retrieves documents from a specified collection path. Currently retrieves
  * all fields indicated in the GraphQL selection set. Eventually this will
@@ -43,16 +96,36 @@ async function selectFromCollection(
             const data = doc.data();
             let docResult: any = {};
             for (let field of fieldsToRetrieve) {
+                let args: any = {};
+                for (let arg of field.arguments!) {
+                    args[(arg as any).name.value] = (arg as any).value.value
+                }
                 const fieldName = (field as any).name.value;
                 const { selectionSet } = field;
+
+                // Here we handle document references and nested collections.
+                // First, we need to determine which one we are dealing with.
                 if (selectionSet && selectionSet.selections) {
-                    let nestedPath = `${collectionName}/${doc.id}/${fieldName}`;
-                    const nestedResult = await selectFromCollection(
-                        store,
-                        nestedPath,
-                        selectionSet
-                    );
-                    docResult[fieldName] = nestedResult.docs;
+                    let nestedPath: string;
+                    if (args.fromCollection) {
+                        const target = args.fromCollection;
+                        const docId = data[fieldName];
+                        nestedPath = `${target}/${docId}`;
+                        const nestedResult = await selectDocument(
+                            store,
+                            nestedPath,
+                            selectionSet
+                        );
+                        docResult[fieldName] = nestedResult;
+                    } else {
+                        nestedPath = `${collectionName}/${doc.id}/${fieldName}`;
+                        const nestedResult = await selectFromCollection(
+                            store,
+                            nestedPath,
+                            selectionSet
+                        );
+                        docResult[fieldName] = nestedResult.docs;
+                    }
                 } else {
                     if (fieldName === 'id') {
                         docResult[fieldName] = doc.id;
