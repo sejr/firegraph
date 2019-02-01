@@ -2,9 +2,10 @@
   "name": "firegraph",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "MIT",
   "scripts": {
+    "test": "jest --env=jsdom --browser",
     "start": "ts-node src/index.ts",
     "build": "tsc -p tsconfig.json --outDir lib",
     "examples:types": "ts-node example/types.ts",
