@@ -35,52 +35,65 @@ yarn add graphql graphql-tag firegraph
 
 ## Usage
 
-Right now, `firegraph` has somewhat limited functionality but it can still be very useful when you want a quick way to retrieve values for various collections with arbitrary levels of nesting.
+**You do not need to host a GraphQL server to use Firegraph.** Your project does require the above dependencies (`firegraph`, `graphql`, and `graphql-tag`, however. You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
+
+### Retrieving a Collection
 
 ``` typescript
-import gql from 'graphql-tag';
-import firegraph from 'firegraph';
-import { firestore } from '../path/to/my/firebase';
-
-const userQuery = gql`
+const { posts } = await firegraph.resolve(firestore, gql`
     query {
-        users {
+        posts {
             id
-            hometown
-            fullName
-            birthdate
-            favoriteColor
-            posts {
+            title
+            body
+        }
+    }
+`)
+```
+### Retrieving Nested Collections
+
+``` typescript
+const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
+    query {
+        posts {
+            id
+            title
+            body
+            comments {
                 id
-                message
+                body
             }
         }
     }
-`;
-
-firegraph.resolve(firestore, userQuery).then(result => {
-    for (let user of result.users) {
-        console.log(user);
-    }
-});
+`)
 ```
 
-The console log in that for loop at the end would produce something like:
+### Retrieving Collections with References
+
+Right now, we are assuming that `post.author` is a string that matches the ID of some document in the `users` collection. In the future we will leverage Firestore's `DocumentReference` value type to handle both use cases.
 
 ``` typescript
-{
-    id: 'sZOgUC33ijsGSzX17ybT',
-    hometown: GeoPoint { _lat: 40.141832766, _long: -84.242165698 },
-    fullName: { family: 'Doe', given: 'John', middle: null },
-    birthdate: Timestamp { seconds: 747763200, nanoseconds: 0 },
-    favoriteColor: 'blue',
-    posts: [
-        {
-            id: 'i4CWhNXr8qPqaG3KLrZk',
-            message: 'Hello world!'
+const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore, gql`
+    query {
+        posts {
+            id
+            title
+            body
+            author(fromCollection: "users") {
+                id
+                displayName
+            }
+            comments {
+                id
+                body
+                author(fromCollection: "users") {
+                    id
+                    displayName
+                }
+            }
         }
-    ]
-}
+    }
+`)
 ```
 
 # Roadmap
