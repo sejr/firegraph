@@ -53,7 +53,7 @@ const userQuery = gql`
 `;
 
 firegraph.resolve(firestore, userQuery).then(result => {
-    for (let user of users) {
+    for (let user of result.users) {
         console.log(user);
     }
 });
