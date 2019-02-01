@@ -2,9 +2,6 @@ import gql from 'graphql-tag';
 import firegraph from '../src';
 import { firestore } from '../test/firebase';
 
-/**
- * 
- */
 const postsQuery = gql`
     query {
         posts {
