@@ -1,6 +1,21 @@
-# Firegraph
+<p align="center">
+    <img src="./assets/brand.svg" width="200px"/>
+</p>
+<h3 align="center">GraphQL Superpowers for Google Cloud Firebase</h3>
 
-> GraphQL superpowers for Google Cloud Firestore
+> This is **not** an official Google product, nor is it maintained or supported by Google employees. For support with Firebase or Firestore, please [click here](https://firebase.google.com/support/).
+
+___
+
+## Introduction
+
+[Cloud Firestore](https://cloud.google.com/firestore/docs/) is a NoSQL document database built for automatic scaling, high performance, and ease of application development. While the Cloud Firestore interface has many of the same features as traditional databases, as a NoSQL database it differs from them in the way it describes relationships between data objects. It is a part of the Google Cloud platform, and a spiritual successor to the Firebase Real-Time Database.
+
+Firestore makes it easy to securely store and retrieve data, and already has a powerful API for querying data. **Firegraph** builds on that awesome foundation by making it even easier to retrieve data across collections, subcollections, and document references.
+
+## Example
+
+Right now, `firegraph` has somewhat limited functionality but it can still be very useful when you want a quick way to retrieve values for various collections with arbitrary levels of nesting.
 
 ``` typescript
 import gql from 'graphql-tag';
