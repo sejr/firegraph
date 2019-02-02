@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 // Top-level imports related to Firegraph.
+import { parseObjectValue } from './firegraph/Where';
 import { resolveCollection } from './firegraph/Collection';
 import { FiregraphResult } from './types/Firegraph';
 
@@ -30,8 +31,18 @@ async function resolve(
         for (let collection of targetCollections) {
             const {
                 name: { value: collectionName },
-                selectionSet
+                selectionSet,
+                arguments: collectionArguments,
             } = collection;
+
+            // Parse the GraphQL argument AST into something we can use.
+            const parsedArgs: any = {};
+            collectionArguments.forEach((arg: any) => {
+                if (arg.value.kind === 'ObjectValue') {
+                    const { fields } = arg.value;
+                    parsedArgs[arg.name.value] = parseObjectValue(fields);
+                }
+            });
 
             // Now we begin to recursively fetch values defined in GraphQL
             // selection sets. We pass our `firestore` instance to ensure
@@ -39,6 +50,7 @@ async function resolve(
             const result = await resolveCollection(
                 firestore,
                 collectionName,
+                parsedArgs,
                 selectionSet
             );
 

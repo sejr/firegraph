@@ -33,6 +33,8 @@ export async function resolveDocument(
             if (selectionSet && selectionSet.selections) {
                 let nestedPath: string;
                 const { matchesKeyFromCollection } = args;
+
+                // Document reference.
                 if (matchesKeyFromCollection) {
                     const docId = data[fieldName];
                     nestedPath = `${matchesKeyFromCollection}/${docId}`;
@@ -42,11 +44,14 @@ export async function resolveDocument(
                         selectionSet
                     );
                     docResult[fieldName] = nestedResult;
+
+                // Nested collection.
                 } else {
                     nestedPath = `${documentPath}/${fieldName}`;
                     const nestedResult = await resolveCollection(
                         store,
                         nestedPath,
+                        args,
                         selectionSet
                     );
                     docResult[fieldName] = nestedResult.docs;
