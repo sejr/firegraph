@@ -94,14 +94,14 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
             id
             title
             body
-            author(fromCollection: "users") {
+            author(matchesKeyFromCollection: "users") {
                 id
                 displayName
             }
             comments {
                 id
                 body
-                author(fromCollection: "users") {
+                author(matchesKeyFromCollection: "users") {
                     id
                     displayName
                 }

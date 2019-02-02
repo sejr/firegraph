@@ -51,7 +51,7 @@ describe('firegraph', () => {
                 posts {
                     id
                     message
-                    author(fromCollection: "users") {
+                    author(matchesKeyFromCollection: "users") {
                         id
                         fullName
                         favoriteColor
@@ -69,4 +69,25 @@ describe('firegraph', () => {
             expect(author).toHaveProperty('favoriteColor');
         });
     });
+
+    // it('can filter results with WHERE clause', async () => {
+    //     const { posts } = await firegraph.resolve(firestore, gql`
+    //         query {
+    //             posts(where: {
+    //                 author: "sZOgUC33ijsGSzX17ybT"
+    //             }) {
+    //                 id
+    //                 message
+    //                 author(matchesKeyFromCollection: "users") {
+    //                     id
+    //                 }
+    //             }
+    //         }
+    //     `);
+    //     posts.forEach((post: any) => {
+    //         expect(post).toHaveProperty('author');
+    //         expect(post.author).toHaveProperty('id');
+    //         expect(post.author.id).toEqual('sZOgUC33ijsGSzX17ybT');
+    //     });
+    // });
 });

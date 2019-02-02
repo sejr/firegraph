@@ -7,14 +7,14 @@ const postsQuery = gql`
         posts {
             id
             message
-            author(fromCollection: "users") {
+            author(matchesKeyFromCollection: "users") {
                 id
                 fullName
             }
             comments {
                 id
                 message
-                author(fromCollection: "users") {
+                author(matchesKeyFromCollection: "users") {
                     id
                     fullName
                 }
