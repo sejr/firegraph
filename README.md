@@ -5,7 +5,7 @@
 
 <p align="center">
     <a href="https://badge.fury.io/js/firegraph">
-        <img src="https://badge.fury.io/js/firegraph.svg" alt="npm version" height="18" />
+        <img src="https://badge.fury.io/js/firegraph.svg" alt="npm version" />
     </a>
     <a href="https://travis-ci.org/sejr/firegraph">
         <img src="https://travis-ci.org/sejr/firegraph.svg?branch=master" alt="travis build" />
@@ -122,3 +122,7 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
 # Contributing
 
 Thank you for your interest! You are welcome (and encouraged) to submit Issues and Pull Requests. If you want to add features, check out the roadmap above (which will have more information as time passes). You are welcome to ping me on Twitter as well: [@sjroot](https://twitter.com/sjroot)
+
+## New Features
+
+I am utilizing test-driven development with this repository, because it is extremely easy to describe new features before they are implemented. That said, any feature you want to add must come with appropriate tests. The tests have to pass before any changes will be merged into the master branch.
