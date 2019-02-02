@@ -13,7 +13,6 @@ describe('firegraph', () => {
             }
         `);
 
-        expect(posts).toHaveLength(1);
         posts.map((post: any) => {
             expect(post).toHaveProperty('id');
             expect(post).toHaveProperty('message');
@@ -51,7 +50,7 @@ describe('firegraph', () => {
                 posts {
                     id
                     message
-                    author(fromCollection: "users") {
+                    author(matchesKeyFromCollection: "users") {
                         id
                         fullName
                         favoriteColor
@@ -67,6 +66,28 @@ describe('firegraph', () => {
             expect(author).toHaveProperty('id');
             expect(author).toHaveProperty('fullName');
             expect(author).toHaveProperty('favoriteColor');
+        });
+    });
+
+    it('can filter results with WHERE clause', async () => {
+        const authorId = 'sZOgUC33ijsGSzX17ybT';
+        const { posts } = await firegraph.resolve(firestore, gql`
+            query {
+                posts(where: {
+                    author: ${authorId},
+                }) {
+                    id
+                    message
+                    author(matchesKeyFromCollection: "users") {
+                        id
+                    }
+                }
+            }
+        `);
+        posts.forEach((post: any) => {
+            expect(post).toHaveProperty('author');
+            expect(post.author).toHaveProperty('id');
+            expect(post.author.id).toEqual('sZOgUC33ijsGSzX17ybT');
         });
     });
 });

@@ -13,13 +13,26 @@ import { resolveDocument } from './Document';
 export async function resolveCollection(
     store: firebase.firestore.Firestore,
     collectionName: string,
+    collectionArgs: { [key:string]: any },
     selectionSet: GraphQLSelectionSet
 ): Promise<FiregraphCollectionResult> {
+    let collectionQuery: any = store.collection(collectionName);
     let collectionResult: FiregraphCollectionResult = {
         name: collectionName,
         docs: []
     };
-    const collectionSnapshot = await store.collection(collectionName).get();
+    if (collectionArgs) {
+        if (collectionArgs['where']) {
+            const where = collectionArgs['where'];
+            where.forEach((filter: any) => {
+                collectionQuery = collectionQuery.where(
+                    filter['key'], '==', filter['value']
+                );
+            });
+        }
+    }
+    
+    const collectionSnapshot = await collectionQuery.get();
     if (selectionSet && selectionSet.selections) {
         for (let doc of collectionSnapshot.docs) {
             const documentPath = `${collectionName}/${doc.id}`;

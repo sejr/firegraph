@@ -94,14 +94,14 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
             id
             title
             body
-            author(fromCollection: "users") {
+            author(matchesKeyFromCollection: "users") {
                 id
                 displayName
             }
             comments {
                 id
                 body
-                author(fromCollection: "users") {
+                author(matchesKeyFromCollection: "users") {
                     id
                     displayName
                 }
@@ -110,6 +110,29 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
     }
 `)
 ```
+
+### Filtering Results
+
+One of our primary goals is to wrap the Firestore API in its entirety. Filtering
+is one of the areas where GraphQL query syntax will really shine:
+
+``` typescript
+const authorId = 'sZOgUC33ijsGSzX17ybT';
+const { posts: postsBySomeAuthor } = await firegraph.resolve(firestore, gql`
+    query {
+        posts(where: {
+            author: ${authorId},
+        }) {
+            id
+            message
+            author(matchesKeyFromCollection: "users") {
+                id
+            }
+        }
+    }
+`);
+```
+
 
 # Roadmap
 
