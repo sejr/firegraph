@@ -25,9 +25,39 @@ export async function resolveCollection(
         if (collectionArgs['where']) {
             const where = collectionArgs['where'];
             where.forEach((filter: any) => {
-                collectionQuery = collectionQuery.where(
-                    filter['key'], '==', filter['value']
-                );
+                const key: string = filter['key'];
+                const value: string = filter['value'];
+                const splitKey: string[] = key.split('_');
+                const whereOp = splitKey[splitKey.length - 1];
+                switch (whereOp) {
+                    case 'neq':
+                        collectionQuery = collectionQuery
+                            .where(key, '>', value)
+                            .where(key, '<', value);
+                        break;
+                    case 'gt':
+                        collectionQuery = collectionQuery
+                            .where(key, '>', value);
+                        break;
+                    case 'gte':
+                        collectionQuery = collectionQuery
+                            .where(key, '>', value)
+                            .where(key, '==', value);
+                        break;
+                    case 'lt':
+                        collectionQuery = collectionQuery
+                            .where(key, '<', value);
+                        break;
+                    case 'lte':
+                        collectionQuery = collectionQuery
+                            .where(key, '<', value)
+                            .where(key, '==', value);
+                        break;
+                    default: 
+                        collectionQuery = collectionQuery
+                            .where(key, '==', value);
+                        break;
+                }
             });
         }
     }

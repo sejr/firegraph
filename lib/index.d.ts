@@ -1,8 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
-declare type FiregraphResult = {
-    [key: string]: any;
-};
+import { FiregraphResult } from './types/Firegraph';
 /**
  * Runs a GraphQL query against a Google Cloud Firestore instance.
  * @param firestore An initialized Firestore instance.

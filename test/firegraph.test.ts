@@ -84,10 +84,30 @@ describe('firegraph', () => {
                 }
             }
         `);
+
         posts.forEach((post: any) => {
             expect(post).toHaveProperty('author');
             expect(post.author).toHaveProperty('id');
             expect(post.author.id).toEqual('sZOgUC33ijsGSzX17ybT');
         });
+    });
+
+    it('can filter results with WHERE operations', async () => {
+        const authorId = 'sZOgUC33ijsGSzX17ybT';
+        const { posts } = await firegraph.resolve(firestore, gql`
+            query {
+                posts(where: {
+                    author_neq: ${authorId},
+                }) {
+                    id
+                    message
+                    author(matchesKeyFromCollection: "users") {
+                        id
+                    }
+                }
+            }
+        `);
+
+        expect(posts).toHaveLength(0);
     });
 });
