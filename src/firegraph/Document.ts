@@ -13,11 +13,23 @@ import { resolveCollection } from './Collection';
 export async function resolveDocument(
     store: firebase.firestore.Firestore,
     documentPath: string,
-    selectionSet: GraphQLSelectionSet
+    selectionSet: GraphQLSelectionSet,
+    fetchedDocument?: firebase.firestore.DocumentSnapshot
 ): Promise<FiregraphResult> {
+    let data: any;
+    let doc: firebase.firestore.DocumentSnapshot;
     let docResult: FiregraphResult = {};
-    const doc = await store.doc(documentPath).get();
-    const data = doc.data()!;
+
+    // If this function is passed with a Firestore document (i.e. from the 
+    // `resolveCollection` API), we don't need to fetch it again.
+    if (fetchedDocument) {
+        doc = fetchedDocument;
+        data = fetchedDocument.data();
+    } else {
+        doc = await store.doc(documentPath).get();
+        data = doc.data();
+    }
+
     if (selectionSet && selectionSet.selections) {
         const fieldsToRetrieve = selectionSet.selections;
         for (let field of fieldsToRetrieve) {

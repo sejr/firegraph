@@ -37,7 +37,8 @@ export async function resolveCollection(
             collectionResult.docs.push(await resolveDocument(
                 store,
                 documentPath,
-                selectionSet
+                selectionSet,
+                doc
             ));
         }
     }
