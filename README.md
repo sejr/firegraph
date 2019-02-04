@@ -24,7 +24,7 @@ Firestore makes it easy to securely store and retrieve data, and already has a p
 
 # Getting Started
 
-Getting started with Firegraph is very easy! No need to write or host your own GraphQL server, either.
+Getting started with Firegraph is very easy! **You do not need to host a GraphQL server to use Firegraph.** However, your project does require some GraphQL-related dependencies. 
 
 ## Installing
 
@@ -38,7 +38,7 @@ yarn add graphql graphql-tag firegraph
 
 ## Usage
 
-**You do not need to host a GraphQL server to use Firegraph.** Your project does require the above dependencies (`firegraph`, `graphql`, and `graphql-tag`), however. You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
+You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
 
 ### Retrieving a Collection
 
@@ -159,4 +159,8 @@ Thank you for your interest! You are welcome (and encouraged) to submit Issues a
 
 ## New Features
 
-I am utilizing test-driven development with this repository, because it is extremely easy to describe new features before they are implemented. That said, any feature you want to add must come with appropriate tests. The tests have to pass before any changes will be merged into the master branch.
+To submit a new feature, you should follow these steps:
+
+1. Clone the repository and write tests that describe how your new feature is used and the results you would expect.
+2. Implement the appropriate changes to our code base. The `test` directory includes a Firestore instance that is ready to go; just provide your Firebase app config as environment variables.
+3. Submit a PR once you've implemented changes and ensured that your new tests pass without causing problems with other tests.
