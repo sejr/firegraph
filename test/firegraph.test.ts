@@ -104,7 +104,10 @@ describe('firegraph', () => {
                 }
             `);
 
-            expect(posts).toHaveLength(1);
+            posts.forEach((post: any) => {
+                expect(post).toHaveProperty('score');
+                expect(post.score).toBeGreaterThan(6);
+            });
         });
 
         it('can filter with `_gte` operator', async () => {
@@ -119,7 +122,10 @@ describe('firegraph', () => {
                 }
             `);
     
-            expect(posts).toHaveLength(2);
+            posts.forEach((post: any) => {
+                expect(post).toHaveProperty('score');
+                expect(post.score).toBeGreaterThanOrEqual(6);
+            });
         });
 
         it('can filter with `_lt` operator', async () => {
@@ -134,7 +140,10 @@ describe('firegraph', () => {
                 }
             `);
     
-            expect(posts).toHaveLength(1);
+            posts.forEach((post: any) => {
+                expect(post).toHaveProperty('score');
+                expect(post.score).toBeLessThan(14);
+            });
         });
 
         it('can filter with `_lte` operator', async () => {
@@ -149,7 +158,10 @@ describe('firegraph', () => {
                 }
             `);
     
-            expect(posts).toHaveLength(2);
+            posts.forEach((post: any) => {
+                expect(post).toHaveProperty('score');
+                expect(post.score).toBeLessThanOrEqual(14);
+            });
         });
 
         it('can detect array membership with `_contains`', async () => {
@@ -161,11 +173,15 @@ describe('firegraph', () => {
                     }) {
                         id
                         score
+                        likes
                     }
                 }
             `);
     
-            expect(posts).toHaveLength(1);
+            posts.forEach((post: any) => {
+                expect(post).toHaveProperty('likes');
+                expect(post.likes).toContain(someUserId);
+            });
         });
     });
 });
