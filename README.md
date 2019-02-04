@@ -42,11 +42,11 @@ npm install --save graphql graphql-tag firegraph
 yarn add graphql graphql-tag firegraph
 ```
 
-## Usage
+## Queries
 
 You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
 
-### Retrieving a Collection
+### Collections
 
 Every top-level name in a `query` is considered a Firestore collection. For
 example, in the query below, we are querying every document in the `posts`
@@ -66,7 +66,7 @@ const { posts } = await firegraph.resolve(firestore, gql`
 `)
 ```
 
-### Retrieving Nested Collections
+### Subcollections
 
 When you have nested values (e.g. in the query below), they are processed
 as child collections. To clarify, for each `doc` in the `posts` collection,
@@ -89,7 +89,7 @@ const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
 `)
 ```
 
-### Retrieving Collections with References
+### Document References
 
 Right now, we are assuming that `post.author` is a string that matches the ID of some document in the `users` collection. In the future we will leverage Firestore's `DocumentReference` value type to handle both use cases.
 
