@@ -1,6 +1,7 @@
 import { GraphQLSelectionSet } from '../types/GraphQL';
 import { FiregraphCollectionResult } from '../types/Firegraph';
 import { resolveDocument } from './Document';
+import { setQueryFilters } from './Where';
 
 /**
  * Retrieves documents from a specified collection path. Currently retrieves
@@ -21,47 +22,14 @@ export async function resolveCollection(
         name: collectionName,
         docs: []
     };
+
     if (collectionArgs) {
         if (collectionArgs['where']) {
             const where = collectionArgs['where'];
-            where.forEach((filter: any) => {
-                const key: string = filter['key'];
-                const value: string = filter['value'];
-                const splitKey: string[] = key.split('_');
-                const whereOp = splitKey[splitKey.length - 1];
-                switch (whereOp) {
-                    case 'neq':
-                        collectionQuery = collectionQuery
-                            .where(key, '>', value)
-                            .where(key, '<', value);
-                        break;
-                    case 'gt':
-                        collectionQuery = collectionQuery
-                            .where(key, '>', value);
-                        break;
-                    case 'gte':
-                        collectionQuery = collectionQuery
-                            .where(key, '>', value)
-                            .where(key, '==', value);
-                        break;
-                    case 'lt':
-                        collectionQuery = collectionQuery
-                            .where(key, '<', value);
-                        break;
-                    case 'lte':
-                        collectionQuery = collectionQuery
-                            .where(key, '<', value)
-                            .where(key, '==', value);
-                        break;
-                    default: 
-                        collectionQuery = collectionQuery
-                            .where(key, '==', value);
-                        break;
-                }
-            });
+            collectionQuery = setQueryFilters(collectionQuery, where);
         }
     }
-    
+
     const collectionSnapshot = await collectionQuery.get();
     if (selectionSet && selectionSet.selections) {
         for (let doc of collectionSnapshot.docs) {

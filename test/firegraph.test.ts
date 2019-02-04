@@ -69,45 +69,87 @@ describe('firegraph', () => {
         });
     });
 
-    it('can filter results with WHERE clause', async () => {
-        const authorId = 'sZOgUC33ijsGSzX17ybT';
-        const { posts } = await firegraph.resolve(firestore, gql`
-            query {
-                posts(where: {
-                    author: ${authorId},
-                }) {
-                    id
-                    message
-                    author(matchesKeyFromCollection: "users") {
+    describe('WHERE', () => {
+        it('can filter with key-value equality', async () => {
+            const authorId = 'sZOgUC33ijsGSzX17ybT';
+            const { posts } = await firegraph.resolve(firestore, gql`
+                query {
+                    posts(where: {
+                        author: ${authorId},
+                    }) {
                         id
+                        message
+                        author(matchesKeyFromCollection: "users") {
+                            id
+                        }
                     }
                 }
-            }
-        `);
-
-        posts.forEach((post: any) => {
-            expect(post).toHaveProperty('author');
-            expect(post.author).toHaveProperty('id');
-            expect(post.author.id).toEqual('sZOgUC33ijsGSzX17ybT');
+            `);
+    
+            posts.forEach((post: any) => {
+                expect(post).toHaveProperty('author');
+                expect(post.author).toHaveProperty('id');
+                expect(post.author.id).toEqual('sZOgUC33ijsGSzX17ybT');
+            });
         });
-    });
-
-    it('can filter results with WHERE operations', async () => {
-        const authorId = 'sZOgUC33ijsGSzX17ybT';
-        const { posts } = await firegraph.resolve(firestore, gql`
-            query {
-                posts(where: {
-                    author_neq: ${authorId},
-                }) {
-                    id
-                    message
-                    author(matchesKeyFromCollection: "users") {
+        it('can filter with `_gt` operator', async () => {
+            const { posts } = await firegraph.resolve(firestore, gql`
+                query {
+                    posts(where: {
+                        score_gt: 6,
+                    }) {
                         id
+                        score
                     }
                 }
-            }
-        `);
+            `);
 
-        expect(posts).toHaveLength(0);
+            expect(posts).toHaveLength(1);
+        });
+
+        it('can filter with `_gte` operator', async () => {
+            const { posts } = await firegraph.resolve(firestore, gql`
+                query {
+                    posts(where: {
+                        score_gte: 6,
+                    }) {
+                        id
+                        score
+                    }
+                }
+            `);
+    
+            expect(posts).toHaveLength(2);
+        });
+
+        it('can filter with `_lt` operator', async () => {
+            const { posts } = await firegraph.resolve(firestore, gql`
+                query {
+                    posts(where: {
+                        score_lt: 14,
+                    }) {
+                        id
+                        score
+                    }
+                }
+            `);
+    
+            expect(posts).toHaveLength(1);
+        });
+
+        it('can filter with `_lte` operator', async () => {
+            const { posts } = await firegraph.resolve(firestore, gql`
+                query {
+                    posts(where: {
+                        score_lte: 14,
+                    }) {
+                        id
+                        score
+                    }
+                }
+            `);
+    
+            expect(posts).toHaveLength(2);
+        });
     });
 });
