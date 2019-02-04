@@ -22,9 +22,15 @@ ___
 
 Firestore makes it easy to securely store and retrieve data, and already has a powerful API for querying data. **Firegraph** builds on that awesome foundation by making it even easier to retrieve data across collections, subcollections, and document references.
 
+## Primary Goals
+
+- **Wrap the Firestore SDK in its entirety.** This means that, in time, we hope to support features like real-time updates, caching, index management, and other APIs available through Firestore's SDK.
+- **Leverage features of GraphQL query syntax.** When creating this library, I initially planned to create a "GraphQL-esque" query language specifically for Firestore. I have since decided that is the wrong way to go, and opted to ensure that all Firegraph queries are valid GraphQL. This should make it easier if you decide to roll your own GraphQL backend at some point.
+- **Operate as a lightweight wrapper.** As we move toward supporting all Firestore APIs, the goal is to also introduce support for some common (but not directly supported) Firestore use cases. That said, Firegraph should retain a small footprint and avoid depending on other NPM modules as much as possible.
+
 # Getting Started
 
-Getting started with Firegraph is very easy! No need to write or host your own GraphQL server, either.
+Getting started with Firegraph is very easy! **You do not need to host a GraphQL server to use Firegraph.** However, your project does require some GraphQL-related dependencies. 
 
 ## Installing
 
@@ -36,11 +42,11 @@ npm install --save graphql graphql-tag firegraph
 yarn add graphql graphql-tag firegraph
 ```
 
-## Usage
+## Queries
 
-**You do not need to host a GraphQL server to use Firegraph.** Your project does require the above dependencies (`firegraph`, `graphql`, and `graphql-tag`), however. You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
+You can either write queries inside your JavaScript files with `gql`, or if you use webpack, you can use `graphql-tag/loader` to import GraphQL query files (`*.graphql`) directly.
 
-### Retrieving a Collection
+### Collections
 
 Every top-level name in a `query` is considered a Firestore collection. For
 example, in the query below, we are querying every document in the `posts`
@@ -60,7 +66,7 @@ const { posts } = await firegraph.resolve(firestore, gql`
 `)
 ```
 
-### Retrieving Nested Collections
+### Subcollections
 
 When you have nested values (e.g. in the query below), they are processed
 as child collections. To clarify, for each `doc` in the `posts` collection,
@@ -83,7 +89,7 @@ const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
 `)
 ```
 
-### Retrieving Collections with References
+### Document References
 
 Right now, we are assuming that `post.author` is a string that matches the ID of some document in the `users` collection. In the future we will leverage Firestore's `DocumentReference` value type to handle both use cases.
 
@@ -159,4 +165,8 @@ Thank you for your interest! You are welcome (and encouraged) to submit Issues a
 
 ## New Features
 
-I am utilizing test-driven development with this repository, because it is extremely easy to describe new features before they are implemented. That said, any feature you want to add must come with appropriate tests. The tests have to pass before any changes will be merged into the master branch.
+To submit a new feature, you should follow these steps:
+
+1. Clone the repository and write tests that describe how your new feature is used and the results you would expect.
+2. Implement the appropriate changes to our code base. The `test` directory includes a Firestore instance that is ready to go; just provide your Firebase app config as environment variables.
+3. Submit a PR once you've implemented changes and ensured that your new tests pass without causing problems with other tests.
