@@ -151,5 +151,21 @@ describe('firegraph', () => {
     
             expect(posts).toHaveLength(2);
         });
+
+        it('can detect array membership with `_contains`', async () => {
+            const someUserId = 'sZOgUC33ijsGSzX17ybT';
+            const { posts } = await firegraph.resolve(firestore, gql`
+                query {
+                    posts(where: {
+                        likes_contains: ${someUserId},
+                    }) {
+                        id
+                        score
+                    }
+                }
+            `);
+    
+            expect(posts).toHaveLength(1);
+        });
     });
 });
