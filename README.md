@@ -22,6 +22,12 @@ ___
 
 Firestore makes it easy to securely store and retrieve data, and already has a powerful API for querying data. **Firegraph** builds on that awesome foundation by making it even easier to retrieve data across collections, subcollections, and document references.
 
+## Primary Goals
+
+- **Wrap the Firestore SDK in its entirety.** This means that, in time, we hope to support features like real-time updates, caching, index management, and other APIs available through Firestore's SDK.
+- **Leverage features of GraphQL query syntax.** When creating this library, I initially planned to create a "GraphQL-esque" query language specifically for Firestore. I have since decided that is the wrong way to go, and opted to ensure that all Firegraph queries are valid GraphQL. This should make it easier if you decide to roll your own GraphQL backend at some point.
+- **Operate as a lightweight wrapper.** As we move toward supporting all Firestore APIs, the goal is to also introduce support for some common (but not directly supported) Firestore use cases. That said, Firegraph should retain a small footprint and avoid depending on other NPM modules as much as possible.
+
 # Getting Started
 
 Getting started with Firegraph is very easy! **You do not need to host a GraphQL server to use Firegraph.** However, your project does require some GraphQL-related dependencies. 
