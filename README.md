@@ -113,8 +113,19 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
 
 ### Filtering Results
 
-One of our primary goals is to wrap the Firestore API in its entirety. Filtering
-is one of the areas where GraphQL query syntax will really shine:
+One of our primary goals is to wrap the Firestore API in its entirety. That said, the `where`
+clause in Firegraph maps directly to the expected behavior in Firestore:
+
+- `someKey: someValue` maps to `.where(someKey, '==', someValue)`
+- `someKey_gt: someValue` maps to `.where(someKey, '>', someValue)`
+- `someKey_gte: someValue` maps to `.where(someKey, '>=', someValue)`
+- `someKey_lt: someValue` maps to `.where(someKey, '<', someValue)`
+- `someKey_lte: someValue` maps to `.where(someKey, '>=', someValue)`
+- `someKey_contains: someValue` maps to `.where(someKey, 'array-contains', someValue)`
+
+For the last one, of course, `someKey` would have to use Firestore's array type. All of the restrictions
+related to compound queries with Firestore (no logical OR or inequality testing) still apply but those
+are some of the first things we are hoping to add support for.
 
 ``` typescript
 const authorId = 'sZOgUC33ijsGSzX17ybT';
