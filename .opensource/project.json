@@ -1,0 +1,22 @@
+{
+    // Display name for the project
+    "name": "Firegraph",
+  
+    // Platforms this repository supports. 
+    // Options are Android, iOS, Web, and Games.
+    "platforms": [
+      "Web"
+    ],
+  
+    // Main content file
+    "content": "README.md",
+
+    // Non-README markdown pages to render
+    "pages" : [],
+  
+    // Related projects on Github, in the format $owner/$repo
+    "related": [],
+
+    // (optional) Links to external resources
+    "tabs": []
+}
