@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --env=jsdom --browser",
     "start": "ts-node src/index.ts",
-    "build": "tsc -p tsconfig.json --outDir lib",
+    "install": "tsc -p tsconfig.json --outDir lib",
     "examples:types": "ts-node example/types.ts",
     "examples:references": "ts-node example/references.ts",
     "prepublish": "yarn build && npm-auto-version",
