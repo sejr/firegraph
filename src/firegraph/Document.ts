@@ -11,13 +11,13 @@ import { resolveCollection } from './Collection';
  * @param selectionSet The rules for defining the documents we want to get.
  */
 export async function resolveDocument(
-    store: firebase.firestore.Firestore,
+    store: firebase.default.firestore.Firestore,
     documentPath: string,
     selectionSet: GraphQLSelectionSet,
-    fetchedDocument?: firebase.firestore.DocumentSnapshot
+    fetchedDocument?: firebase.default.firestore.DocumentSnapshot
 ): Promise<FiregraphResult> {
     let data: any;
-    let doc: firebase.firestore.DocumentSnapshot;
+    let doc: firebase.default.firestore.DocumentSnapshot;
     let docResult: FiregraphResult = {};
 
     // If this function is passed with a Firestore document (i.e. from the 

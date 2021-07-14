@@ -12,7 +12,7 @@ import { setQueryFilters } from './Where';
  * @param selectionSet The rules for defining the documents we want to get.
  */
 export async function resolveCollection(
-    store: firebase.firestore.Firestore,
+    store: firebase.default.firestore.Firestore,
     collectionName: string,
     collectionArgs: { [key:string]: any },
     selectionSet: GraphQLSelectionSet

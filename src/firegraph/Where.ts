@@ -23,7 +23,7 @@ export const parseObjectValue = (objectFields: any): any => {
 export const setQueryFilters = (
     collectionQuery: any,
     where: any[]
-): firebase.firestore.Query => {
+): firebase.default.firestore.Query => {
     where.forEach((filter: any) => {
         const key: string = filter['key'];
         const value: any = filter['value'];
