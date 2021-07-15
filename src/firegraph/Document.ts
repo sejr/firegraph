@@ -44,12 +44,16 @@ export async function resolveDocument(
             // First, we need to determine which one we are dealing with.
             if (selectionSet && selectionSet.selections) {
                 let nestedPath: string;
-                const { matchesKeyFromCollection } = args;
+                const { path } = args;
 
-                // If its just ID of some document from a collection & collection path is provided
-                if (matchesKeyFromCollection) {
+                // If its just raw path of some document
+                if ((typeof data[fieldName]) == "string") { 
                     const docId = data[fieldName];
-                    nestedPath = `${matchesKeyFromCollection}/${docId}`;
+
+                    // If parent path is provided, consider it
+                    let documentParentPath:string = path ? path : "";
+
+                    nestedPath = `${documentParentPath}${docId}`;
                     const nestedResult = await resolveDocument(
                       store,
                       nestedPath,
