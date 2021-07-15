@@ -46,10 +46,20 @@ export async function resolveDocument(
                 let nestedPath: string;
                 const { matchesKeyFromCollection } = args;
 
-                // Document reference.
+                // If its just ID of some document from a collection & collection path is provided
                 if (matchesKeyFromCollection) {
                     const docId = data[fieldName];
                     nestedPath = `${matchesKeyFromCollection}/${docId}`;
+                    const nestedResult = await resolveDocument(
+                      store,
+                      nestedPath,
+                      selectionSet
+                    );
+                    docResult[fieldName] = nestedResult;
+                
+                // if field is of Document Reference type, use its path to resolve the document
+                } else if (data[fieldName] != undefined && data[fieldName].constructor!.name! == "DocumentReference") {
+                    nestedPath = `${data[fieldName].path}`;
                     const nestedResult = await resolveDocument(
                         store,
                         nestedPath,
@@ -57,7 +67,7 @@ export async function resolveDocument(
                     );
                     docResult[fieldName] = nestedResult;
 
-                // Nested collection.
+                // Else consider it a nested collection.
                 } else {
                     nestedPath = `${documentPath}/${fieldName}`;
                     const nestedResult = await resolveCollection(
