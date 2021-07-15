@@ -44,13 +44,13 @@ export async function resolveDocument(
             // First, we need to determine which one we are dealing with.
             if (selectionSet && selectionSet.selections) {
                 let nestedPath: string;
-                const { path } = args;
 
                 // If its just raw path of some document
                 if ((typeof data[fieldName]) == "string") { 
                     const docId = data[fieldName];
 
                     // If parent path is provided, consider it
+                    const { path } = args;
                     let documentParentPath:string = path ? path : "";
 
                     nestedPath = `${documentParentPath}${docId}`;

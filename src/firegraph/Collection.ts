@@ -28,6 +28,11 @@ export async function resolveCollection(
             const where = collectionArgs['where'];
             collectionQuery = setQueryFilters(collectionQuery, where);
         }
+
+        if(collectionArgs['limit']){
+            const limit = collectionArgs['limit'];
+            collectionQuery = collectionQuery.limit(limit);
+        }
     }
 
     const collectionSnapshot = await collectionQuery.get();

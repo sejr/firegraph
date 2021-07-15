@@ -41,6 +41,8 @@ async function resolve(
                 if (arg.value.kind === 'ObjectValue') {
                     const { fields } = arg.value;
                     parsedArgs[arg.name.value] = parseObjectValue(fields);
+                }else{
+                    parsedArgs[arg.name.value] = arg.value.value;
                 }
             });
 
