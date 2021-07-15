@@ -91,7 +91,9 @@ const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
 
 ### Document References
 
-Right now, we are assuming that `post.author` is a string that matches the ID of some document in the `users` collection. In the future we will leverage Firestore's `DocumentReference` value type to handle both use cases.
+If `post.author` is a `DocumentReference` field, it is considered as a complete path to the document from the root of the database.
+
+If `post.author` is a `String` type of field, it is also considered as a complete path to document. However, you can optionally provide a parent path to the document collection using the `path` argument. Note that path argument must end in a `"/"` to be valid.
 
 ``` typescript
 const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore, gql`
@@ -100,14 +102,21 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
             id
             title
             body
-            author(matchesKeyFromCollection: "users") {
+
+            # Here author is either a DocumentReference type of field
+            # or is a String field with complete path to the document
+            author {
                 id
                 displayName
             }
+
             comments {
                 id
                 body
-                author(matchesKeyFromCollection: "users") {
+
+                # Here author's id is only saved in the field,
+                # hence parent path to document is provided
+                authorId(path: "users/") {
                     id
                     displayName
                 }
