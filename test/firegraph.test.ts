@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import firegraph from '../src';
-import { firestore } from './firebase';
+import {firestore} from './firebase';
 
 describe('firegraph', () => {
     it('should be able to retrieve a collection', async () => {
@@ -44,13 +44,14 @@ describe('firegraph', () => {
         });
     });
 
-    it('should be able to resolve document references', async () => {
+    describe('DOCUMENT REFERENCES', ()=>{
+        it('should be able to resolve document reference', async () => {
         const { posts } = await firegraph.resolve(firestore, gql`
             query {
                 posts {
                     id
                     message
-                    author(matchesKeyFromCollection: "users") {
+                    author{
                         id
                         fullName
                         favoriteColor
@@ -59,19 +60,53 @@ describe('firegraph', () => {
             }
         `);
 
-        posts.forEach((post: any) => {
-            expect(post).toHaveProperty('author');
+          posts.forEach((post: any) => {
+              expect(post).toHaveProperty('author');
 
-            const { author } = post;
-            expect(author).toHaveProperty('id');
-            expect(author).toHaveProperty('fullName');
-            expect(author).toHaveProperty('favoriteColor');
+              const { author } = post;
+              expect(author).toHaveProperty('id');
+              expect(author).toHaveProperty('fullName');
+              expect(author).toHaveProperty('favoriteColor');
+          });
+        });
+
+        it('should be able to resolve raw document reference type and parent path', async () => {
+          const { posts } = await firegraph.resolve(firestore, gql`
+              query {
+                  posts {
+                      id
+                      message
+                      comments{
+                        id
+                        authorId(path:"users/"){   
+                          id
+                          fullName
+                          favoriteColor
+                        }
+                      }
+                  }
+              }
+          `);
+  
+          posts.forEach((post: any) => {
+              expect(post).toHaveProperty('comments');
+
+              const {comments} = post;
+
+              comments.forEach((comment:any) => {
+
+                expect(comment).toHaveProperty('authorId');
+
+                const {authorId} = comment;
+                expect(authorId).toHaveProperty("id");
+              });
+          });
         });
     });
 
     describe('WHERE', () => {
         it('can filter with key-value equality', async () => {
-            const authorId = 'sZOgUC33ijsGSzX17ybT';
+            const authorId = 'U7prtqicwDUSKgasXXNv';
             const { posts } = await firegraph.resolve(firestore, gql`
                 query {
                     posts(where: {
@@ -79,7 +114,7 @@ describe('firegraph', () => {
                     }) {
                         id
                         message
-                        author(matchesKeyFromCollection: "users") {
+                        author{
                             id
                         }
                     }
@@ -89,7 +124,7 @@ describe('firegraph', () => {
             posts.forEach((post: any) => {
                 expect(post).toHaveProperty('author');
                 expect(post.author).toHaveProperty('id');
-                expect(post.author.id).toEqual('sZOgUC33ijsGSzX17ybT');
+                expect(post.author.id).toEqual('U7prtqicwDUSKgasXXNv');
             });
         });
         it('can filter with `_gt` operator', async () => {
@@ -165,7 +200,7 @@ describe('firegraph', () => {
         });
 
         it('can detect array membership with `_contains`', async () => {
-            const someUserId = 'sZOgUC33ijsGSzX17ybT';
+            const someUserId = 'U7prtqicwDUSKgasXXNv';
             const { posts } = await firegraph.resolve(firestore, gql`
                 query {
                     posts(where: {
@@ -183,5 +218,42 @@ describe('firegraph', () => {
                 expect(post.likes).toContain(someUserId);
             });
         });
+    });
+
+    describe('LIMIT', () => {
+      it('Should be able to limit root collection query length', async () => {
+        const limit = 1;
+        const { posts } = await firegraph.resolve(firestore, gql`
+            query {
+                posts(limit:${limit}) {
+                    id
+                }
+            }
+        `);
+  
+        expect(posts.length).toBeLessThanOrEqual(limit);
+      });
+  
+      it('Should be able to limit nested collection query length', async () => {
+        const root_limit = 1;
+        const sub_limit = 1;
+        const { posts } = await firegraph.resolve(firestore, gql`
+            query {
+                posts(limit:${root_limit}){
+                    id
+                    comments(limit:${sub_limit}){
+                      id
+                    }
+                }
+            }
+        `);
+  
+        expect(posts.length).toBeLessThanOrEqual(root_limit);
+
+        posts.forEach((post: any) => {
+          expect(post).toHaveProperty('comments');
+          expect(post.comments.length).toBeLessThanOrEqual(sub_limit);
+        });
+      });
     });
 });
