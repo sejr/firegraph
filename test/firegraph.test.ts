@@ -262,7 +262,7 @@ describe('firegraph', () => {
       it('Should order root collection documents', async()=>{
         const {posts} = await firegraph.resolve(firestore, gql`
         query{
-          posts(order:{
+          posts(orderby:{
             message:"desc"
           }){
             id
@@ -294,7 +294,7 @@ describe('firegraph', () => {
       it('Should order collection documents by multiple fields', async()=>{
         const {posts} = await firegraph.resolve(firestore, gql`
         query{
-          posts(order:{
+          posts(orderby:{
             category:"desc",
             score:"asc"
           }){
