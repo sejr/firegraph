@@ -2,6 +2,7 @@ import { GraphQLSelectionSet } from '../types/GraphQL';
 import { FiregraphCollectionResult } from '../types/Firegraph';
 import { resolveDocument } from './Document';
 import { setQueryFilters } from './Where';
+import { setOrders } from './Order';
 
 /**
  * Retrieves documents from a specified collection path. Currently retrieves
@@ -32,6 +33,11 @@ export async function resolveCollection(
         if(collectionArgs['limit']){
             const limit = collectionArgs['limit'];
             collectionQuery = collectionQuery.limit(limit);
+        }
+
+        if(collectionArgs['order']){
+          const orders = collectionArgs['order'];
+          collectionQuery = setOrders(collectionQuery, orders);
         }
     }
 
