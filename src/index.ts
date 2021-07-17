@@ -5,6 +5,7 @@ import 'firebase/firestore';
 import { parseObjectValue } from './firegraph/Where';
 import { resolveCollection } from './firegraph/Collection';
 import { FiregraphResult } from './types/Firegraph';
+import CacheManager from './firegraph/CacheManager';
 
 /**
  * Runs a GraphQL query against a Google Cloud Firestore instance.
@@ -18,6 +19,7 @@ async function resolve(
 ): Promise<FiregraphResult> {
     const results: FiregraphResult = {};
     const { definitions } = query;
+    const cacheManager = new CacheManager();
 
     for (let definition of definitions) {
         const { selectionSet } = definition;
@@ -53,7 +55,8 @@ async function resolve(
                 firestore,
                 collectionName,
                 parsedArgs,
-                selectionSet
+                selectionSet,
+                cacheManager
             );
 
             // Push the root query result to our results list.

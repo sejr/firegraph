@@ -3,6 +3,7 @@ import { FiregraphCollectionResult } from '../types/Firegraph';
 import { resolveDocument } from './Document';
 import { setQueryFilters } from './Where';
 import { setOrders } from './Order';
+import CacheManager from './CacheManager';
 
 /**
  * Retrieves documents from a specified collection path. Currently retrieves
@@ -11,12 +12,14 @@ import { setOrders } from './Order';
  * @param store An initialized Firestore instance.
  * @param collectionName The path of the collection we want to retrieve.
  * @param selectionSet The rules for defining the documents we want to get.
+ * @param cacheManager An instance of cache manager to pass on to the doucments fetcher
  */
 export async function resolveCollection(
     store: firebase.default.firestore.Firestore,
     collectionName: string,
     collectionArgs: { [key:string]: any },
-    selectionSet: GraphQLSelectionSet
+    selectionSet: GraphQLSelectionSet,
+    cacheManager: CacheManager
 ): Promise<FiregraphCollectionResult> {
     let collectionQuery: any = store.collection(collectionName);
     let collectionResult: FiregraphCollectionResult = {
@@ -49,7 +52,7 @@ export async function resolveCollection(
                 store,
                 documentPath,
                 selectionSet,
-                doc
+                cacheManager
             ));
         }
     }

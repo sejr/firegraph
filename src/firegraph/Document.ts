@@ -1,6 +1,7 @@
 import { GraphQLSelectionSet } from '../types/GraphQL';
 import { FiregraphResult } from '../types/Firegraph';
 import { resolveCollection } from './Collection';
+import CacheManager from './CacheManager';
 
 /**
  * Retrieves a single document from a specified document path. Retrieves
@@ -9,25 +10,36 @@ import { resolveCollection } from './Collection';
  * @param store An initialized Firestore instance.
  * @param documentPath The path of the document we want to retrieve.
  * @param selectionSet The rules for defining the documents we want to get.
+ * @param cacheManager An instance of cache manager to use
  */
 export async function resolveDocument(
     store: firebase.default.firestore.Firestore,
     documentPath: string,
     selectionSet: GraphQLSelectionSet,
-    fetchedDocument?: firebase.default.firestore.DocumentSnapshot
+    cacheManager: CacheManager,
+    fetchedDocument?: firebase.default.firestore.DocumentSnapshot,
 ): Promise<FiregraphResult> {
     let data: any;
     let doc: firebase.default.firestore.DocumentSnapshot;
     let docResult: FiregraphResult = {};
+    let cachedDoc = cacheManager.getDocument(documentPath);
 
+    // If cache is found, use it
+    if(cachedDoc != undefined) {
+        doc = cachedDoc;
+        data = doc.data();
+    }
     // If this function is passed with a Firestore document (i.e. from the 
     // `resolveCollection` API), we don't need to fetch it again.
-    if (fetchedDocument) {
+    else if (fetchedDocument) {
         doc = fetchedDocument;
         data = fetchedDocument.data();
     } else {
         doc = await store.doc(documentPath).get();
         data = doc.data();
+
+        // Add document to cache
+        cacheManager.saveDocument(documentPath, doc);
     }
 
     if (selectionSet && selectionSet.selections) {
@@ -57,7 +69,8 @@ export async function resolveDocument(
                     const nestedResult = await resolveDocument(
                       store,
                       nestedPath,
-                      selectionSet
+                      selectionSet,
+                      cacheManager
                     );
                     docResult[fieldName] = nestedResult;
                 
@@ -67,7 +80,8 @@ export async function resolveDocument(
                     const nestedResult = await resolveDocument(
                         store,
                         nestedPath,
-                        selectionSet
+                        selectionSet,
+                        cacheManager
                     );
                     docResult[fieldName] = nestedResult;
 
@@ -78,7 +92,8 @@ export async function resolveDocument(
                         store,
                         nestedPath,
                         args,
-                        selectionSet
+                        selectionSet,
+                        cacheManager
                     );
                     docResult[fieldName] = nestedResult.docs;
                 }
