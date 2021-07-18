@@ -34,7 +34,7 @@ export async function resolveCollection(
         }
 
         if(collectionArgs['limit']){
-            const limit = collectionArgs['limit'];
+            const limit:number = Number.parseInt(collectionArgs['limit']);
             collectionQuery = collectionQuery.limit(limit);
         }
 
