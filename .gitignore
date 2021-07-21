@@ -60,5 +60,9 @@ typings/
 # next.js build output
 .next
 
+# prettier config files
+.prettierrc.json
+.prettierignore
+
 # build output
 lib/
