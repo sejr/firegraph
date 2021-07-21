@@ -1,7 +1,8 @@
+import firebase from 'firebase/app';
 import { GraphQLSelectionSet } from '../types/GraphQL';
 import { FiregraphResult } from '../types/Firegraph';
 import { resolveCollection } from './Collection';
-import CacheManager from './CacheManager';
+import { CacheManager } from './CacheManager';
 
 /**
  * Retrieves a single document from a specified document path. Retrieves
@@ -13,98 +14,101 @@ import CacheManager from './CacheManager';
  * @param cacheManager An instance of cache manager to use
  */
 export async function resolveDocument(
-    store: firebase.default.firestore.Firestore,
-    documentPath: string,
-    selectionSet: GraphQLSelectionSet,
-    cacheManager: CacheManager,
-    fetchedDocument?: firebase.default.firestore.DocumentSnapshot,
+  store: firebase.firestore.Firestore,
+  documentPath: string,
+  selectionSet: GraphQLSelectionSet,
+  cacheManager: CacheManager,
+  fetchedDocument?: firebase.firestore.DocumentSnapshot
 ): Promise<FiregraphResult> {
-    let data: any;
-    let doc: firebase.default.firestore.DocumentSnapshot;
-    let docResult: FiregraphResult = {};
-    let cachedDoc = cacheManager.getDocument(documentPath);
+  let data: any;
+  let doc: firebase.firestore.DocumentSnapshot;
+  let docResult: FiregraphResult = {};
+  let cachedDoc = cacheManager.getDocument(documentPath);
 
-    // If cache is found, use it
-    if(cachedDoc != undefined) {
-        doc = cachedDoc;
-        data = doc.data();
-    }
-    // If this function is passed with a Firestore document (i.e. from the 
-    // `resolveCollection` API), we don't need to fetch it again.
-    else if (fetchedDocument) {
-        doc = fetchedDocument;
-        data = fetchedDocument.data();
-    } else {
-        doc = await store.doc(documentPath).get();
-        data = doc.data();
+  // If cache is found, use it
+  if (cachedDoc != undefined) {
+    doc = cachedDoc;
+    data = doc.data();
+  }
+  // If this function is passed with a Firestore document (i.e. from the
+  // `resolveCollection` API), we don't need to fetch it again.
+  else if (fetchedDocument) {
+    doc = fetchedDocument;
+    data = fetchedDocument.data();
+  } else {
+    doc = await store.doc(documentPath).get();
+    data = doc.data();
 
-        // Add document to cache
-        cacheManager.saveDocument(documentPath, doc);
-    }
+    // Add document to cache
+    cacheManager.saveDocument(documentPath, doc);
+  }
 
-    if (selectionSet && selectionSet.selections) {
-        const fieldsToRetrieve = selectionSet.selections;
-        for (let field of fieldsToRetrieve) {
-            let args: any = {};
-            for (let arg of field.arguments!) {
-                args[(arg as any).name.value] = (arg as any).value.value
-            }
-            const fieldName = (field as any).name.value;
-            const { selectionSet } = field;
+  if (selectionSet && selectionSet.selections) {
+    const fieldsToRetrieve = selectionSet.selections;
+    for (let field of fieldsToRetrieve) {
+      let args: any = {};
+      for (let arg of field.arguments!) {
+        args[(arg as any).name.value] = (arg as any).value.value;
+      }
+      const fieldName = (field as any).name.value;
+      const { selectionSet } = field;
 
-            // Here we handle document references and nested collections.
-            // First, we need to determine which one we are dealing with.
-            if (selectionSet && selectionSet.selections) {
-                let nestedPath: string;
+      // Here we handle document references and nested collections.
+      // First, we need to determine which one we are dealing with.
+      if (selectionSet && selectionSet.selections) {
+        let nestedPath: string;
 
-                // If its just raw path of some document
-                if ((typeof data[fieldName]) == "string") { 
-                    const docId = data[fieldName];
+        // If its just raw path of some document
+        if (typeof data[fieldName] == 'string') {
+          const docId = data[fieldName];
 
-                    // If parent path is provided, consider it
-                    const { path } = args;
-                    let documentParentPath:string = path ? path : "";
+          // If parent path is provided, consider it
+          const { path } = args;
+          let documentParentPath: string = path ? path : '';
 
-                    nestedPath = `${documentParentPath}${docId}`;
-                    const nestedResult = await resolveDocument(
-                      store,
-                      nestedPath,
-                      selectionSet,
-                      cacheManager
-                    );
-                    docResult[fieldName] = nestedResult;
-                
-                // if field is of Document Reference type, use its path to resolve the document
-                } else if (data[fieldName] != undefined && data[fieldName].constructor!.name! == "DocumentReference") {
-                    nestedPath = `${data[fieldName].path}`;
-                    const nestedResult = await resolveDocument(
-                        store,
-                        nestedPath,
-                        selectionSet,
-                        cacheManager
-                    );
-                    docResult[fieldName] = nestedResult;
+          nestedPath = `${documentParentPath}${docId}`;
+          const nestedResult = await resolveDocument(
+            store,
+            nestedPath,
+            selectionSet,
+            cacheManager
+          );
+          docResult[fieldName] = nestedResult;
 
-                // Else consider it a nested collection.
-                } else {
-                    nestedPath = `${documentPath}/${fieldName}`;
-                    const nestedResult = await resolveCollection(
-                        store,
-                        nestedPath,
-                        args,
-                        selectionSet,
-                        cacheManager
-                    );
-                    docResult[fieldName] = nestedResult.docs;
-                }
-            } else {
-                if (fieldName === 'id') {
-                    docResult[fieldName] = doc.id;
-                } else {
-                    docResult[fieldName] = data[fieldName];
-                }
-            }
+          // if field is of Document Reference type, use its path to resolve the document
+        } else if (
+          data[fieldName] != undefined &&
+          data[fieldName].constructor!.name! == 'DocumentReference'
+        ) {
+          nestedPath = `${data[fieldName].path}`;
+          const nestedResult = await resolveDocument(
+            store,
+            nestedPath,
+            selectionSet,
+            cacheManager
+          );
+          docResult[fieldName] = nestedResult;
+
+          // Else consider it a nested collection.
+        } else {
+          nestedPath = `${documentPath}/${fieldName}`;
+          const nestedResult = await resolveCollection(
+            store,
+            nestedPath,
+            args,
+            selectionSet,
+            cacheManager
+          );
+          docResult[fieldName] = nestedResult.docs;
         }
+      } else {
+        if (fieldName === 'id') {
+          docResult[fieldName] = doc.id;
+        } else {
+          docResult[fieldName] = data[fieldName];
+        }
+      }
     }
-    return docResult;
+  }
+  return docResult;
 }

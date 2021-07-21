@@ -5,14 +5,14 @@
  * @param order Set of filters formatted as `KEY_COMPARATOR: ASC/DESC` pairs
  */
 export const setOrders = (
-    collectionQuery: any,
-    orders: any[]
+  collectionQuery: any,
+  orders: any[]
 ): firebase.default.firestore.Query => {
-    orders.forEach((filter: any) => {
-        const field: string = filter['key'];
-        const order: any = filter['value'];
-        
-        collectionQuery = collectionQuery.orderBy(field, order);
-    });
-    return collectionQuery;
-}
+  orders.forEach((filter: any) => {
+    const field: string = filter['key'];
+    const order: any = filter['value'];
+
+    collectionQuery = collectionQuery.orderBy(field, order);
+  });
+  return collectionQuery;
+};

@@ -3,16 +3,16 @@
  * @param objectFields Set of key-value pairs in GraphQL AST form.
  */
 export const parseObjectValue = (objectFields: any): any => {
-    return objectFields.map((field: any) => {
-        const { name, value } = field;
-        if (value.kind === 'IntValue') value.value = parseInt(value.value);
+  return objectFields.map((field: any) => {
+    const { name, value } = field;
+    if (value.kind === 'IntValue') value.value = parseInt(value.value);
 
-        return {
-            key: name.value,
-            value: value.value
-        };
-    });
-}
+    return {
+      key: name.value,
+      value: value.value,
+    };
+  });
+};
 
 /**
  * Applies filters to a Firestore query. Basically chains a series of
@@ -21,39 +21,38 @@ export const parseObjectValue = (objectFields: any): any => {
  * @param where Set of filters formatted as `KEY_COMPARATOR: VALUE` pairs
  */
 export const setQueryFilters = (
-    collectionQuery: any,
-    where: any[]
+  collectionQuery: any,
+  where: any[]
 ): firebase.default.firestore.Query => {
-    where.forEach((filter: any) => {
-        const key: string = filter['key'];
-        const value: any = filter['value'];
-        const splitKey: string[] = key.split('_');
-        const whereOp = splitKey[splitKey.length - 1];
-        const actualKey = key.slice(0, -1 * (whereOp.length + 1));
-        switch (whereOp) {
-        case 'eq':
-            collectionQuery = collectionQuery.where(actualKey, '==', value);
-            break;
-        case 'gt':
-            collectionQuery = collectionQuery.where(actualKey, '>', value);
-            break;
-        case 'gte':
-            collectionQuery = collectionQuery.where(actualKey, '>=', value);
-            break;
-        case 'lt':
-            collectionQuery = collectionQuery.where(actualKey, '<', value);
-            break;
-        case 'lte':
-            collectionQuery = collectionQuery.where(actualKey, '<=', value);
-            break;
-        case 'contains':
-            collectionQuery = collectionQuery
-                .where(actualKey, 'array-contains', value);
-            break;
-        default: 
-            collectionQuery = collectionQuery.where(key, '==', value);
-            break;
-        }
-    });
-    return collectionQuery;
-}
+  where.forEach((filter: any) => {
+    const key: string = filter['key'];
+    const value: any = filter['value'];
+    const splitKey: string[] = key.split('_');
+    const whereOp = splitKey[splitKey.length - 1];
+    const actualKey = key.slice(0, -1 * (whereOp.length + 1));
+    switch (whereOp) {
+      case 'eq':
+        collectionQuery = collectionQuery.where(actualKey, '==', value);
+        break;
+      case 'gt':
+        collectionQuery = collectionQuery.where(actualKey, '>', value);
+        break;
+      case 'gte':
+        collectionQuery = collectionQuery.where(actualKey, '>=', value);
+        break;
+      case 'lt':
+        collectionQuery = collectionQuery.where(actualKey, '<', value);
+        break;
+      case 'lte':
+        collectionQuery = collectionQuery.where(actualKey, '<=', value);
+        break;
+      case 'contains':
+        collectionQuery = collectionQuery.where(actualKey, 'array-contains', value);
+        break;
+      default:
+        collectionQuery = collectionQuery.where(key, '==', value);
+        break;
+    }
+  });
+  return collectionQuery;
+};
