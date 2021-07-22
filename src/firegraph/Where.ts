@@ -47,7 +47,11 @@ export const setQueryFilters = (
         collectionQuery = collectionQuery.where(actualKey, '<=', value);
         break;
       case 'contains':
-        collectionQuery = collectionQuery.where(actualKey, 'array-contains', value);
+        collectionQuery = collectionQuery.where(
+          actualKey,
+          'array-contains',
+          value
+        );
         break;
       default:
         collectionQuery = collectionQuery.where(key, '==', value);

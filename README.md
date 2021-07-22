@@ -55,7 +55,9 @@ document in the response. Note: `id` is a special field that actually retrieves
 the document key.
 
 ```typescript
-const { posts } = await firegraph.resolve(firestore, gql`
+const { posts } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
       posts {
         id
@@ -63,7 +65,8 @@ const { posts } = await firegraph.resolve(firestore, gql`
         body
       }
     }
-  `);
+  `
+);
 ```
 
 ### Subcollections
@@ -74,7 +77,9 @@ we also retrieve the `posts/${doc.id}/comments` collection. This result is
 stored in the `comments` key for each document that is returned.
 
 ```typescript
-const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
+const { posts: postsWithComments } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
       posts {
         id
@@ -86,7 +91,8 @@ const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
         }
       }
     }
-  `);
+  `
+);
 ```
 
 ### Document References
@@ -96,7 +102,9 @@ If `post.author` is a `DocumentReference` field, it is considered as a complete 
 If `post.author` is a `String` type of field, it is also considered as a complete path to document. However, you can optionally provide a parent path to the document collection using the `path` argument. Note that path argument must end in a `"/"` to be valid.
 
 ```typescript
-const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore, gql`
+const { posts: postsWithAuthorAndComments } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
       posts {
         id
@@ -123,7 +131,8 @@ const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore,
         }
       }
     }
-  `);
+  `
+);
 ```
 
 ### Filtering Results
@@ -144,7 +153,9 @@ are some of the first things we are hoping to add support for.
 
 ```typescript
 const authorId = 'sZOgUC33ijsGSzX17ybT';
-const { posts: postsBySomeAuthor } = await firegraph.resolve(firestore, gql`
+const { posts: postsBySomeAuthor } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
         posts(where: {
             author: ${authorId},
@@ -157,7 +168,8 @@ const { posts: postsBySomeAuthor } = await firegraph.resolve(firestore, gql`
             }
         }
     }
-`);
+`
+);
 ```
 
 ### Ordering Results
@@ -165,7 +177,9 @@ const { posts: postsBySomeAuthor } = await firegraph.resolve(firestore, gql`
 The result of sub/collections can be ordered by using the `orderby` clause, with providing an object containing fields and their order type of either `asc`ending or `desc`ending
 
 ```typescript
-const { posts } = await firegraph.resolve(firestore, gql`
+const { posts } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
       posts(orderby: { createdOn: "desc", title: "asc" }) {
         id
@@ -174,7 +188,8 @@ const { posts } = await firegraph.resolve(firestore, gql`
         body
       }
     }
-  `);
+  `
+);
 ```
 
 **NOTE:** The `indexes` for ordering fields _must be created beforehand_ in firebase console, and those fields _should be part of the query_.
@@ -184,7 +199,9 @@ const { posts } = await firegraph.resolve(firestore, gql`
 To limit the loading of documents to a certain number in a sub/collection query, `limit` argument can be supplied to the query.
 
 ```typescript
-const { posts } = await firegraph.resolve(firestore, gql`
+const { posts } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
       posts(limit: 10) {
         id
@@ -196,7 +213,8 @@ const { posts } = await firegraph.resolve(firestore, gql`
         }
       }
     }
-  `);
+  `
+);
 ```
 
 # Roadmap

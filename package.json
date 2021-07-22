@@ -25,6 +25,7 @@
     "firebase-mock": "^2.3.2",
     "jest": "^27.0.6",
     "npm-auto-version": "^1.0.0",
+    "prettier": "^2.3.2",
     "ts-jest": "^27.0.3",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.10"
