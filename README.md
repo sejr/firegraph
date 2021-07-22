@@ -14,7 +14,7 @@
 
 > This is **not** an official Google product, nor is it maintained or supported by Google employees. For support with Firebase or Firestore, please [click here](https://firebase.google.com/support/).
 
-___
+---
 
 # Introduction
 
@@ -30,11 +30,11 @@ Firestore makes it easy to securely store and retrieve data, and already has a p
 
 # Getting Started
 
-Getting started with Firegraph is very easy! **You do not need to host a GraphQL server to use Firegraph.** However, your project does require some GraphQL-related dependencies. 
+Getting started with Firegraph is very easy! **You do not need to host a GraphQL server to use Firegraph.** However, your project does require some GraphQL-related dependencies.
 
 ## Installing
 
-``` bash
+```bash
 # npm
 npm install --save graphql graphql-tag firegraph
 
@@ -54,16 +54,19 @@ collection and retrieving the `id`, `title`, and `body` values from each
 document in the response. Note: `id` is a special field that actually retrieves
 the document key.
 
-``` typescript
-const { posts } = await firegraph.resolve(firestore, gql`
+```typescript
+const { posts } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
-        posts {
-            id
-            title
-            body
-        }
+      posts {
+        id
+        title
+        body
+      }
     }
-`)
+  `
+);
 ```
 
 ### Subcollections
@@ -73,48 +76,63 @@ as child collections. To clarify, for each `doc` in the `posts` collection,
 we also retrieve the `posts/${doc.id}/comments` collection. This result is
 stored in the `comments` key for each document that is returned.
 
-``` typescript
-const { posts: postsWithComments } = await firegraph.resolve(firestore, gql`
+```typescript
+const { posts: postsWithComments } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
-        posts {
-            id
-            title
-            body
-            comments {
-                id
-                body
-            }
+      posts {
+        id
+        title
+        body
+        comments {
+          id
+          body
         }
+      }
     }
-`)
+  `
+);
 ```
 
 ### Document References
 
-Right now, we are assuming that `post.author` is a string that matches the ID of some document in the `users` collection. In the future we will leverage Firestore's `DocumentReference` value type to handle both use cases.
+If `post.author` is a `DocumentReference` field, it is considered as a complete path to the document from the root of the database.
 
-``` typescript
-const { posts: postsWithAuthorAndComments } = await firegraph.resolve(firestore, gql`
+If `post.author` is a `String` type of field, it is also considered as a complete path to document. However, you can optionally provide a parent path to the document collection using the `path` argument. Note that path argument must end in a `"/"` to be valid.
+
+```typescript
+const { posts: postsWithAuthorAndComments } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
-        posts {
-            id
-            title
-            body
-            author(matchesKeyFromCollection: "users") {
-                id
-                displayName
-            }
-            comments {
-                id
-                body
-                author(matchesKeyFromCollection: "users") {
-                    id
-                    displayName
-                }
-            }
+      posts {
+        id
+        title
+        body
+
+        # Here author is either a DocumentReference type of field
+        # or is a String field with complete path to the document
+        author {
+          id
+          displayName
         }
+
+        comments {
+          id
+          body
+
+          # Here author's id is only saved in the field,
+          # hence parent path to document is provided
+          authorId(path: "users/") {
+            id
+            displayName
+          }
+        }
+      }
     }
-`)
+  `
+);
 ```
 
 ### Filtering Results
@@ -133,23 +151,71 @@ For the last one, of course, `someKey` would have to use Firestore's array type.
 related to compound queries with Firestore (no logical OR or inequality testing) still apply but those
 are some of the first things we are hoping to add support for.
 
-``` typescript
+```typescript
 const authorId = 'sZOgUC33ijsGSzX17ybT';
-const { posts: postsBySomeAuthor } = await firegraph.resolve(firestore, gql`
+const { posts: postsBySomeAuthor } = await firegraph.resolve(
+  firestore,
+  gql`
     query {
         posts(where: {
             author: ${authorId},
         }) {
             id
             message
-            author(matchesKeyFromCollection: "users") {
+            author {
                 id
+                displayName
             }
         }
     }
-`);
+`
+);
 ```
 
+### Ordering Results
+
+The result of sub/collections can be ordered by using the `orderBy` clause, with providing an object containing fields and their order type of either `asc`ending or `desc`ending
+
+```typescript
+const { posts } = await firegraph.resolve(
+  firestore,
+  gql`
+    query {
+      posts(orderBy: { createdOn: "desc", title: "asc" }) {
+        id
+        title
+        createdOn
+        body
+      }
+    }
+  `
+);
+```
+
+**NOTE:** The `indexes` for ordering fields _must be created beforehand_ in firebase console, and those fields _should be part of the query_.
+
+### Limiting Results
+
+To limit the loading of documents to a certain number in a sub/collection query, `limit` argument can be supplied to the query.
+
+```typescript
+const { posts } = await firegraph.resolve(
+  firestore,
+  gql`
+    query {
+      posts(limit: 10) {
+        id
+        title
+        body
+        comments(limit: 10) {
+          id
+          message
+        }
+      }
+    }
+  `
+);
+```
 
 # Roadmap
 

@@ -1,0 +1,7 @@
+jest.config.js
+package.json
+tsconfig.json
+lib/
+.opensource/
+.prettierrc.json
+.travis.yml

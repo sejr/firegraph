@@ -5,7 +5,7 @@
   "version": "1.0.11",
   "license": "MIT",
   "scripts": {
-    "test": "jest --env=jsdom --browser",
+    "test": "jest --env=node",
     "start": "ts-node src/index.ts",
     "build": "tsc -p tsconfig.json --outDir lib",
     "examples:types": "ts-node example/types.ts",
@@ -14,19 +14,20 @@
     "postpublish": "git push origin --tags"
   },
   "dependencies": {
-    "firebase": "^5.8.1",
-    "graphql": "^14.1.1",
-    "graphql-tag": "^2.10.1"
+    "firebase": "^8.7.1",
+    "graphql": "^15.5.1",
+    "graphql-tag": "^2.12.5"
   },
   "devDependencies": {
-    "@types/dotenv": "^6.1.0",
-    "@types/jest": "^23.3.13",
+    "@types/dotenv": "^6.1.1",
+    "@types/jest": "^23.3.14",
     "dotenv": "^6.2.0",
-    "firebase-mock": "^2.2.10",
-    "jest": "^24.0.0",
+    "firebase-mock": "^2.3.2",
+    "jest": "^27.0.6",
     "npm-auto-version": "^1.0.0",
-    "ts-jest": "^23.10.5",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.1"
+    "prettier": "^2.3.2",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.10"
   }
 }

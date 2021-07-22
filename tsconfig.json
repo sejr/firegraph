@@ -1,6 +1,6 @@
 {
-  "files": [
-    "src/index.ts"
+  "include": [
+    "src/"
   ],
   "compilerOptions": {
     /* Basic Options */
