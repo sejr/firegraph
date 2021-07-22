@@ -7,7 +7,7 @@
   "scripts": {
     "test": "jest --env=node",
     "start": "ts-node src/index.ts",
-    "install": "tsc -p tsconfig.json --outDir lib",
+    "build": "tsc -p tsconfig.json --outDir lib",
     "examples:types": "ts-node example/types.ts",
     "examples:references": "ts-node example/references.ts",
     "prepublish": "yarn build && npm-auto-version",

@@ -174,14 +174,14 @@ const { posts: postsBySomeAuthor } = await firegraph.resolve(
 
 ### Ordering Results
 
-The result of sub/collections can be ordered by using the `orderby` clause, with providing an object containing fields and their order type of either `asc`ending or `desc`ending
+The result of sub/collections can be ordered by using the `orderBy` clause, with providing an object containing fields and their order type of either `asc`ending or `desc`ending
 
 ```typescript
 const { posts } = await firegraph.resolve(
   firestore,
   gql`
     query {
-      posts(orderby: { createdOn: "desc", title: "asc" }) {
+      posts(orderBy: { createdOn: "desc", title: "asc" }) {
         id
         title
         createdOn

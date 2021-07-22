@@ -291,7 +291,7 @@ describe('firegraph', () => {
         firestore,
         gql`
           query {
-            posts(orderby: { message: "desc" }) {
+            posts(orderBy: { message: "desc" }) {
               id
               message
             }
@@ -323,7 +323,7 @@ describe('firegraph', () => {
         firestore,
         gql`
           query {
-            posts(orderby: { category: "desc", score: "asc" }) {
+            posts(orderBy: { category: "desc", score: "asc" }) {
               id
               category
               score

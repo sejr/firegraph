@@ -39,8 +39,8 @@ export async function resolveCollection(
       collectionQuery = collectionQuery.limit(limit);
     }
 
-    if (collectionArgs['orderby']) {
-      const orders = collectionArgs['orderby'];
+    if (collectionArgs['orderBy']) {
+      const orders = collectionArgs['orderBy'];
       collectionQuery = setOrders(collectionQuery, orders);
     }
   }
