@@ -52,6 +52,7 @@ export async function resolveDocument(
       }
       const fieldName = (field as any).name.value;
       const { selectionSet } = field;
+      const { alias } = field;
 
       // Here we handle document references and nested collections.
       // First, we need to determine which one we are dealing with.
@@ -73,7 +74,10 @@ export async function resolveDocument(
             selectionSet,
             cacheManager
           );
-          docResult[fieldName] = nestedResult;
+
+          if (alias != undefined)
+            docResult[(alias as any).value] = nestedResult;
+          else docResult[fieldName] = nestedResult;
 
           // if field is of Document Reference type, use its path to resolve the document
         } else if (
@@ -87,7 +91,10 @@ export async function resolveDocument(
             selectionSet,
             cacheManager
           );
-          docResult[fieldName] = nestedResult;
+
+          if (alias != undefined)
+            docResult[(alias as any).value] = nestedResult;
+          else docResult[fieldName] = nestedResult;
 
           // Else consider it a nested collection.
         } else {
@@ -99,13 +106,18 @@ export async function resolveDocument(
             selectionSet,
             cacheManager
           );
-          docResult[fieldName] = nestedResult.docs;
+
+          if (alias != undefined)
+            docResult[(alias as any).value] = nestedResult.docs;
+          else docResult[fieldName] = nestedResult.docs;
         }
       } else {
         if (fieldName === 'id') {
           docResult[fieldName] = doc.id;
         } else {
-          docResult[fieldName] = data[fieldName];
+          if (alias != undefined)
+            docResult[(alias as any).value] = data[fieldName];
+          else docResult[fieldName] = data[fieldName];
         }
       }
     }

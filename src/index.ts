@@ -32,6 +32,7 @@ async function resolve(
     for (let collection of targetCollections) {
       const {
         name: { value: collectionName },
+        alias: alias,
         selectionSet,
         arguments: collectionArguments,
       } = collection;
@@ -59,7 +60,8 @@ async function resolve(
       );
 
       // Push the root query result to our results list.
-      results[result.name] = result.docs;
+      if (alias != undefined) results[alias.value] = result.docs;
+      else results[result.name] = result.docs;
     }
   }
 
