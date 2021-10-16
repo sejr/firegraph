@@ -7,6 +7,18 @@ export const parseObjectValue = (objectFields: any): any => {
     const { name, value } = field;
     if (value.kind === 'IntValue') value.value = parseInt(value.value);
 
+    if (value.kind === 'ListValue') {
+      var itemList: any[] = [];
+      value.values.forEach((e: any) => {
+        itemList.push(e.value);
+      });
+
+      return {
+        key: name.value,
+        value: itemList,
+      };
+    }
+
     return {
       key: name.value,
       value: value.value,
