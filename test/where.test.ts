@@ -129,5 +129,79 @@ describe('firegraph', () => {
         expect(post.likes).toContain(someUserId);
       });
     });
+
+    
+    it('can detect array membership with `_containsAny`', async () => {
+      var sample_list = ['dancing', 'sketching'];
+
+      const { users } = await firegraph.resolve(
+        firestore,
+        gql`
+          query {
+            users(where: { hobbies_containsAny: ${JSON.stringify(
+              sample_list
+            )} }) {
+              id
+              name
+              hobbies
+            }
+          }
+        `
+      );
+
+      users.forEach((user: any) => {
+        expect(user).toHaveProperty('hobbies');
+
+        var hasAny: boolean = false;
+        sample_list.forEach((e) => {
+          hasAny = hasAny || (user.hobbies as String[]).includes(e);
+        });
+        expect(hasAny).toBeTruthy();
+      });
+    });
+
+    it('can filter documents with `_in`', async () => {
+      var sample_list = ['Blue', 'Green'];
+
+      const { users } = await firegraph.resolve(
+        firestore,
+        gql`
+        query {
+          users(where: { favouriteColor_in: ${JSON.stringify(sample_list)} }) {
+            id
+            favouriteColor
+          }
+        }
+      `
+      );
+
+      users.forEach((user: any) => {
+        expect(user).toHaveProperty('favouriteColor');
+        expect(sample_list.includes(user.favouriteColor)).toBeTruthy();
+      });
+    });
+
+    it('can filter documents with `_notIn`', async () => {
+      var sample_list = ['Red', 'Green'];
+
+      const { users } = await firegraph.resolve(
+        firestore,
+        gql`
+        query {
+          users(where: { favouriteColor_notIn: ${JSON.stringify(
+            sample_list
+          )} }) {
+            id
+            favouriteColor
+          }
+        }
+      `
+      );
+
+      users.forEach((user: any) => {
+        expect(user).toHaveProperty('favouriteColor');
+        expect(sample_list.includes(user.favouriteColor)).toBeFalsy();
+      });
+    });
   });
 });
