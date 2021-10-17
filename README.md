@@ -7,8 +7,8 @@
     <a href="https://badge.fury.io/js/firegraph">
         <img src="https://badge.fury.io/js/firegraph.svg" alt="npm version" />
     </a>
-    <a href="https://travis-ci.org/sejr/firegraph">
-        <img src="https://travis-ci.org/sejr/firegraph.svg?branch=master" alt="travis build" />
+    <a href="https://github.com/sejr/firegraph/actions/workflows/nodejs.yaml">
+        <img src="https://github.com/sejr/firegraph/actions/workflows/nodejs.yaml/badge.svg" alt="nodejs build" />
     </a>
 </p>
 
