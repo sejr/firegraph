@@ -82,7 +82,7 @@ export async function resolveDocument(
           // if field is of Document Reference type, use its path to resolve the document
         } else if (
           data[fieldName] != undefined &&
-          data[fieldName].constructor!.name! == 'DocumentReference'
+          data[fieldName].constructor!.name!.startsWith('DocumentReference')
         ) {
           nestedPath = `${data[fieldName].path}`;
           const nestedResult = await resolveDocument(

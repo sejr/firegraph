@@ -11,9 +11,9 @@ describe('firegraph', () => {
         onCacheHit: (path: string) => {
           hits++;
         },
-        onCacheMiss: (path: string) => {},
+        onCacheMiss: (path: string) => { },
         onCacheSaved: (path: string) => {},
-        onCacheRequested: (path: string) => {},
+        onCacheRequested: (path: string) => { },
       };
 
       CacheManager.addListener(listener);
@@ -28,12 +28,12 @@ describe('firegraph', () => {
               message
               author {
                 id
-                fullName
+                fullname
               }
             }
             users {
               id
-              fullName
+              fullname
             }
           }
         `
@@ -45,31 +45,5 @@ describe('firegraph', () => {
       CacheManager.removeListener(listener);
     });
 
-    it('should be able to use alias for collection names and document field names', async () => {
-      const result = await firegraph.resolve(
-        firestore,
-        gql`
-          query {
-            postsAlias1: posts(limit: 1) {
-              id
-              body: message
-            }
-            postsAlias2: posts(limit: 1) {
-              id
-            }
-          }
-        `
-      );
-
-      // Check root collections
-      expect(result).toHaveProperty('postsAlias1');
-      expect(result).toHaveProperty('postsAlias2');
-
-      // Check field names
-      const { postsAlias1 } = result;
-      postsAlias1.forEach((post: any) => {
-        expect(post).toHaveProperty('body');
-      });
-    });
   });
 });

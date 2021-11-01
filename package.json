@@ -20,10 +20,8 @@
     "graphql-tag": "^2.12.5"
   },
   "devDependencies": {
-    "@types/dotenv": "^6.1.1",
     "@types/jest": "^23.3.14",
-    "dotenv": "^6.2.0",
-    "firebase-mock": "^2.3.2",
+    "firestore-mock": "git+https://github.com/Taosif7/firestore-mock.git",
     "jest": "^27.0.6",
     "npm-auto-version": "^1.0.0",
     "prettier": "^2.3.2",
